@@ -1,0 +1,6 @@
+---
+title: "Homework #2"
+author: Brad Gannon; bradgannon
+output: html_document
+---
+
