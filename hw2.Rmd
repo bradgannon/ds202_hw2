@@ -4,3 +4,76 @@ author: Brad Gannon; bradgannon
 output: html_document
 ---
 
+####R Commands (Part 1)
+
+1.
+```{r}
+cel <- c(15, -10)
+cel <- (cel-32) * (5/9)
+cel
+```
+2.
+```{r}
+vec200 <- rep(c(1, 0), times = 100) # assuming sequence is 1, 2, 3, etc.. where the first value would be odd and next would be even
+vec200
+```
+3.
+```{r}
+temp <- 1:1001 # holder for sequence
+temp <- sqrt(temp) %% 1 == 0
+numPerfect <- length(which(temp == TRUE)) # summation of perfect squares
+numPerfect
+```
+
+####Cars and Mileage (Part 2)
+
+```{r}
+library(ggplot2) # for knitting purposes
+```
+1.
+The three most fuel-efficient models, in terms of the highway mileage, are the Volkswagen Jetta, Volkswagen New Beetle (manual), and the Volkswagen New Beetle (auto). This was completed by sorting the highway mileage from high to low and taking the head of the first three values in the data and printing them in the R code below.
+```{r}
+data <- mpg[order(-mpg$hwy),]
+head(data, 3)
+```
+2.
+I believe there to be 47 compact models in this data set. In order to figure this out, I simply created a variable to hold boolean values of where the 'class' column equaled 'compact', and then I counted the occurences of TRUE within this variable. I suppose there could be alternative methods to do this, but it seemed simple in my process of thinking.
+```{r}
+holder <- mpg['class'] == "compact" # TRUE if 'compact', FALSE otherwise
+numCompact <- length(grep(TRUE, holder))
+numCompact
+```
+3.
+Here is the plot for the hwy vs. cty columns in the mpg dataset. You can clearly see how the data is in a fairly linear upward trend and that it seems that city MPG rises with highway MPG, or vice versa. I experimented a bit with a regression line for this graph, which I figured out how to do from an R documentation website online. There are not many points on this graph, but I believe that is because some aspects of the dataset must be empty, in regard to the 'cty' and 'mpg' columns.
+```{r}
+plot <- ggplot(mpg, aes(x=hwy, y=cty)) + geom_point() + geom_smooth(method=lm) # setting up plot and adding trend line
+plot <- plot + ggtitle("Hwy vs. City MPG") + theme(plot.title = element_text(hjust = 0.5)) # adding title and centering it
+plot
+```
+4.
+First, I used a bar chart to compare city and highway MPG for 1999 and 2008 in two separate graphs, which are shown below. I used some color to differentiate the two years, but you can see that cars in 1999 had a slightly better city MPG, while the highway MPG for the two years is essentially equal. Therefore, it is hard to determine a difference based on graphs alone.
+```{r}
+city <- ggplot(mpg, aes(x=year, y=cty, fill=year)) + geom_bar(stat="identity", width=1.0) + theme_minimal()
+city <- city + ggtitle("City MPG, 1999 vs. 2008") + theme(plot.title = element_text(hjust = 0.5))
+city
+```
+```{r}
+highway <- ggplot(mpg, aes(x=year, y=hwy, fill=year)) + geom_bar(stat="identity", width=1.0) + theme_minimal()
+highway <- highway + ggtitle("Highway MPG, 1999 vs. 2008") + theme(plot.title = element_text(hjust = 0.5))
+highway
+```
+For the summary statistics, I reordered mpg by the year in ascending order. From there, I divided the dataset into two, the first being comprised of the year 1999 and the other by year 2008. Next, I took the average MPG (city and mileage) combined to compute a more quantifiable answer to the question.
+```{r}
+mpg <- mpg[order(mpg$year),] # ordering by 1999 first, then 2008. The data is divided evenly between the years
+oldModels <- mpg[1:117,] # all 1999 models are in this set
+newModels <- mpg[118:234,] # all 2008 models are in this set
+oldAvgMPG <- (sum(oldModels['cty']) + sum(oldModels['hwy'])) / 117.0
+newAvgMPG <- (sum(newModels['cty']) + sum(newModels['hwy'])) / 117.0
+```
+```{r}
+oldAvgMPG # 1999 models
+```
+```{r}
+newAvgMPG # 2008 models
+```
+Based on what is shown above with the average MPG values, it appears that 1999 models are marginally more fuel efficient than 2008 models.
